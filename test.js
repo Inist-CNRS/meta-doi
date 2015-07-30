@@ -3,7 +3,7 @@
 
 var path    = require('path');
 var should  = require('should');
-var crossref = require('./index.js');
+var metaDOI = require('./index.js');
 var testSet = [
   {
     "platform" : "ScienceDirect",
@@ -18,12 +18,12 @@ var testSet = [
   {
     "platform" : "Wiley",
     "doi": "10.1111/issg.12022",
-    "year": "2015"
+    "year": "2013"
   },
   {
     "platform" : "Wiley",
     "doi": "10.1111/j.1945-5100.1992.tb00734.x",
-    "year": "2015"
+    "year": "1992"
   },
   {
     "platform" : "BMJ",
@@ -32,25 +32,42 @@ var testSet = [
   }
 ];
 
-testSet.forEach(function(testCase) {
-  console.log(testCase.platform);
-  checkDOI(testCase);
+describe('Crossref doi', function () {
+  testSet.forEach(function(testCase) {
+    //console.log(testCase.platform);
+    DOIcheck(testCase);
+    APIcheck(testCase);
+  });
 });
 
-function checkDOI(testCase) {
-  console.log(testCase);
-  describe('crossref doi', function () {
-      console.log(testCase);
-      it('should be correctly enriched (@01) with ' + testCase.platform, function (done) {
-        console.log(testCase);
-
-        crossref.DOIquery(testCase.doi, function (err, doc) {
-          console.log("OOOO => ", testCase);
+function DOIcheck(testCase) {
+  //console.log(testCase);
+  describe('DOI request ', function () {
+      it('should be correctly enriched (@01) for ' + testCase.platform, function (done) {
+        metaDOI.DOIquery(testCase.doi, function (err, doc) {
           if (err) {
             console.error(err);
             exit(1);
           }
-          should.equal(doc.crossref_result.query_result.body.query.doi_record.crossref.journal.journal_article.publication_date.year, testCase.year);
+          should.equal(metaDOI.DOIgetPublicationDateYear(doc), testCase.year);
+          done();
+        });
+      });
+  });
+}
+
+function APIcheck(testCase) {
+  //console.log(testCase);
+  describe('API request ', function () {
+      //console.log(testCase);
+      it('should be correctly enriched (@02) for ' + testCase.platform, function (done) {
+        metaDOI.APIquery(testCase.doi, function (err, doc) {
+          if (err) {
+            console.error(err);
+            exit(1);
+          }
+          console.log(metaDOI.APIgetPublicationTitle(doc));
+          should.equal(metaDOI.APIgetPublicationDateYear(doc), testCase.year);
           done();
         });
       });
