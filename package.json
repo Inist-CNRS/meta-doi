@@ -1,0 +1,21 @@
+{
+  "name": "crossref",
+  "version": "0.0.1",
+  "description": "Wrapper around the Crossref API.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": {
+    "name": "ezPAARSE Team"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "request": "^2.57.0",
+    "xml2json" : "^0.7.1"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "should": "*"
+  }
+}
