@@ -1,5 +1,5 @@
 {
-  "name": "crossref",
+  "name": "meta-doi",
   "version": "0.0.1",
   "description": "Wrapper around the Crossref API.",
   "main": "index.js",
@@ -12,7 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "request": "^2.57.0",
-    "xml2json" : "^0.7.1"
+    "xml2json" : "^0.7.1",
+    "nconf": "~0.7.1"
   },
   "devDependencies": {
     "mocha": "*",

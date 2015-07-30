@@ -7,7 +7,16 @@ var request = require('request').defaults({
          process.env.https_proxy ||
          process.env.HTTPS_PROXY
 });
+var config = require('./lib/config.js');
+var pid;
 
+// load credentials for DOI requests
+if (config.pid) {
+  pid = config.pid;
+} else {
+  console.error("Pid undefined ! needed for DOI requests");
+  console.error("You can only use API requests");  
+}
 
 /**
  * Query Crossref and get results
@@ -19,14 +28,17 @@ exports.DOIquery = function (doi, callback) {
 
   // query link
   // CrossRef https://doi.crossref.org/search/doi?pid=inis:inis708&format=unixsd&doi=10.1016/0735-6757(91)90169-K
-  
-  var url = 'https://doi.crossref.org/search/doi?pid=inis:inis708&format=unixsd&doi=' + encodeURIComponent(doi);
+  // 
+ 
+  var url = 'https://doi.crossref.org/search/doi?pid=' + pid + '&format=unixsd&doi=' + encodeURIComponent(doi);
 
   request.get(url, function (err, res, body) {
     if (err) { return callback(err); }
 
-    if (res.statusCode !== 200) {
-      return callback(new Error('unexpected status code : ' + res.statusCode));
+    if (res.statusCode === 401) {
+      return callback(new Error('Unauthorized status code (' + res.statusCode + ') check your credentials'));
+    } else if (res.statusCode !== 200) {
+      return callback(new Error('Unexpected status code : ' + res.statusCode));
     }
 
     var info;
