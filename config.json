@@ -1,3 +1,4 @@
 {
-  "pid": "user:passwd"
+  "pid": "user:passwd",
+  "csv-separator": ";"
 }
