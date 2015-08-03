@@ -88,7 +88,7 @@ exports.APIquery = function (doi, callback) {
       return callback(new Error('unexpected status code : ' + res.statusCode));
     }
 
-    var info;
+    var info = {};
 
     try {
       //console.log(body);
@@ -128,6 +128,19 @@ exports.APIgetPublicationTitle = function(api_result) {
 exports.APIgetInfo = function(api_result, extended) {
   var info = {};
 
+  // fill fields with empty values for csv purpose
+  info['doi-publication-title'] = '';
+  info['doi-publication-date-year'] = '';
+  info['doi-publisher'] = '';
+  info['doi-type'] = '';
+  info['doi-ISSN'] = '';
+  info['doi-subject'] = '';     
+  if (extended) {
+    info['doi-license-content-version'] = '';
+    info['doi-license-URL'] = '';
+  }
+
+
   if (api_result.message !== undefined) {
     if (typeof api_result.message['container-title'] !== undefined) {
       // search standard information
@@ -137,14 +150,6 @@ exports.APIgetInfo = function(api_result, extended) {
       info['doi-type'] = api_result.message['type'];
       info['doi-ISSN'] = api_result.message['ISSN'];
       info['doi-subject'] = api_result.message['subject'];
-    } else {
-      // fill fields with empty values for csv purpose
-      info['doi-publication-title'] = '';
-      info['doi-publication-date-year'] = '';
-      info['doi-publisher'] = '';
-      info['doi-type'] = '';
-      info['doi-ISSN'] = '';
-      info['doi-subject'] = '';     
     }
     if (extended) {
       //console.log(api_result.message);
@@ -155,14 +160,11 @@ exports.APIgetInfo = function(api_result, extended) {
         info['doi-license-URL'] = api_result.message['license'][0]['URL'];
       } else {
         console.error("No license informations");
-        info['doi-license-content-version'] = '';
-        info['doi-license-URL'] = '';
       }
     }
-
     return(info);
   }
-  return({});
+  return(info);
 };
 
 
