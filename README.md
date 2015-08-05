@@ -3,6 +3,11 @@ Return metadata from a DOI identifier
 
 ## Usage
 
+require('meta-doi');
+
+....
+
+## Command line usage
 CSV file enrichment
 ```shell
 meta-doi -f my_CSV_file_with_doi_field.csv > my_CSV_file_doi_enrich.csv

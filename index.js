@@ -75,7 +75,6 @@ exports.APIquery = function (doi, callback) {
   // CrossRef https://doi.crossref.org/search/doi?pid=inis:inis708&format=unixsd&doi=10.1016/0735-6757(91)90169-K
   
   var url = 'http://api.crossref.org/works/' + encodeURIComponent(doi);
-  //console.log(doi);
 
   request.get(url, function (err, res, body) {
     if (err) { return callback(err); }
@@ -84,17 +83,16 @@ exports.APIquery = function (doi, callback) {
       // doi not found
       return callback(null, {});
     } else if (res.statusCode !== 200) {
-      console.error(url);
-      return callback(new Error('unexpected status code : ' + res.statusCode));
+      var error = new Error('Unexpected status code : ' + res.statusCode);
+      error.url = url;
+      return callback(error);
     }
 
     var info = {};
 
     try {
-      //console.log(body);
       info = JSON.parse(body);
     } catch(e) {
-      console.log(body);
       return callback(e);
     }
 
@@ -114,15 +112,15 @@ exports.APIgetPublicationDateYear = function(api_result) {
     && api_result.message.issued !== undefined) {
     return(api_result.message.issued['date-parts'][0][0]);
   }
-  return({});
+  return {};
 };
 
 exports.APIgetPublicationTitle = function(api_result) {
   if (api_result.message !== undefined 
    && typeof api_result.message['container-title'] !== undefined) {
-    return(api_result.message['container-title'][0]);
+    return api_result.message['container-title'][0];
   }
-  return({});
+  return {};
 };
 
 exports.APIgetInfo = function(api_result, extended) {
@@ -152,26 +150,22 @@ exports.APIgetInfo = function(api_result, extended) {
       info['doi-subject'] = api_result.message['subject'];
     }
     if (extended) {
-      //console.log(api_result.message);
       // search licence informations
       if (api_result.message['license'] !== undefined
          && api_result.message['license'][0] !== undefined) {
         info['doi-license-content-version'] = api_result.message['license'][0]['content-version'];
         info['doi-license-URL'] = api_result.message['license'][0]['URL'];
-      } else {
-        console.error("No license informations");
       }
     }
-    return(info);
+    return info;
   }
-  return(info);
+  return info;
 };
 
 
 exports.DOIgetPublicationDateYear = function(doc) {
   var publication_date = doc.crossref_result.query_result.body.query.doi_record.crossref.journal.journal_article.publication_date;
   var publication_date_year;
-  //console.log(publication_date);
   if (typeof publication_date === 'object') {
     if (typeof publication_date[0] === 'object') {
       publication_date_year = publication_date[0].year;
@@ -183,5 +177,5 @@ exports.DOIgetPublicationDateYear = function(doc) {
   } else {
     publication_date_year = "unknown";
   }
-  return(publication_date_year);
+  return publication_date_year;
 };

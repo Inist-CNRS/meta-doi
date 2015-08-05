@@ -1,25 +1,36 @@
 {
   "name": "meta-doi",
-  "version": "0.0.1",
-  "description": "Wrapper around the Crossref API.",
+  "version": "1.0.0",
+  "description": "Advanced Wrapper around the Crossref API.",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": {
-    "name": "ezPAARSE Team"
-  },
-  "license": "ISC",
   "dependencies": {
-    "request": "^2.57.0",
-    "xml2json" : "^0.7.1",
-    "nconf": "~0.7.1",
-    "sugar": "~1.4.1",
-    "csv": "~0.4.1",
-    "yargs": "^3.7.2"
+    "csv": "^0.4.5",
+    "nconf": "^0.7.1",
+    "request": "^2.60.0",
+    "should": "^7.0.2",
+    "sugar": "^1.4.1",
+    "xml2json": "^0.7.1",
+    "yargs": "^3.15.0"
   },
   "devDependencies": {
-    "mocha": "*",
-    "should": "*"
-  }
+    "mocha": "^2.2.5"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ezpaarse-project/meta-doi.git"
+  },
+  "keywords": [
+    "doi",
+    "crossref",
+    "csv"
+  ],
+  "author": "pseudom",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ezpaarse-project/meta-doi/issues"
+  },
+  "homepage": "https://github.com/ezpaarse-project/meta-doi#readme"
 }
