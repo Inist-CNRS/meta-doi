@@ -1,6 +1,7 @@
 'use strict';
 
-var parser = require('xml2json');
+var cfg     = require('./config.json');
+var parser  = require('xml2json');
 var request = require('request').defaults({
   proxy: process.env.http_proxy ||
          process.env.HTTP_PROXY ||
@@ -15,8 +16,23 @@ if (config.pid) {
   pid = config.pid;
 } else {
   console.error("Pid undefined ! needed for DOI requests");
-  console.error("You can only use API requests");  
+  console.error("You can only use API requests");
 }
+
+exports.resolve = function (doi, options, cb) {
+  var r = {};
+
+  exports.APIquery(doi, function (err, doc) {
+    if (err) {
+      console.error("Error : " + err);
+      return cb(err);;
+    }
+    if (doc !== null) {
+      r = exports.APIgetInfo(doc, options.extended);
+    }
+    return cb(err, r);
+  });
+};
 
 /**
  * Query Crossref and get results
@@ -28,8 +44,8 @@ exports.DOIquery = function (doi, callback) {
 
   // query link
   // CrossRef https://doi.crossref.org/search/doi?pid=inis:inis708&format=unixsd&doi=10.1016/0735-6757(91)90169-K
-  // 
- 
+  //
+
   var url = 'https://doi.crossref.org/search/doi?pid=' + pid + '&format=unixsd&doi=' + encodeURIComponent(doi);
 
   request.get(url, function (err, res, body) {
@@ -73,7 +89,7 @@ exports.APIquery = function (doi, callback) {
 
   // query link
   // CrossRef https://doi.crossref.org/search/doi?pid=inis:inis708&format=unixsd&doi=10.1016/0735-6757(91)90169-K
-  
+
   var url = 'http://api.crossref.org/works/' + encodeURIComponent(doi);
 
   request.get(url, function (err, res, body) {
@@ -108,7 +124,7 @@ exports.APIquery = function (doi, callback) {
 };
 
 exports.APIgetPublicationDateYear = function(api_result) {
-  if (api_result.message !== undefined 
+  if (api_result.message !== undefined
     && api_result.message.issued !== undefined) {
     return(api_result.message.issued['date-parts'][0][0]);
   }
@@ -116,7 +132,7 @@ exports.APIgetPublicationDateYear = function(api_result) {
 };
 
 exports.APIgetPublicationTitle = function(api_result) {
-  if (api_result.message !== undefined 
+  if (api_result.message !== undefined
    && typeof api_result.message['container-title'] !== undefined) {
     return api_result.message['container-title'][0];
   }
@@ -132,12 +148,13 @@ exports.APIgetInfo = function(api_result, extended) {
   info['doi-publisher'] = '';
   info['doi-type'] = '';
   info['doi-ISSN'] = '';
-  info['doi-subject'] = '';     
+  info['doi-subject'] = '';
   if (extended) {
     info['doi-license-content-version'] = '';
     info['doi-license-URL'] = '';
   }
 
+  if (!api_result) { return info; }
 
   if (api_result.message !== undefined) {
     if (typeof api_result.message['container-title'] !== undefined) {
@@ -172,7 +189,7 @@ exports.DOIgetPublicationDateYear = function(doc) {
     } else if (publication_date.year === undefined) {
       publication_date_year = "unknown";
     } else {
-      publication_date_year = publication_date.year;            
+      publication_date_year = publication_date.year;
     }
   } else {
     publication_date_year = "unknown";
