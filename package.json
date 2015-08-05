@@ -7,15 +7,13 @@
     "meta-doi": "bin/meta-doi.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test.js"
   },
-  "author": {
-    "name": "ezPAARSE Team"
-  },
-  "license": "ISC",
+  "author": "ezPAARSE Team",
+  "license": "MIT",
   "dependencies": {
     "request": "^2.57.0",
-    "xml2json" : "^0.7.1",
+    "xml2json": "^0.7.1",
     "nconf": "~0.7.1",
     "sugar": "~1.4.1",
     "csv": "~0.4.1",
@@ -24,5 +22,17 @@
   "devDependencies": {
     "mocha": "*",
     "should": "*"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ezpaarse-project/meta-doi.git"
+  },
+  "keywords": [
+    "doi",
+    "crossref"
+  ],
+  "bugs": {
+    "url": "https://github.com/ezpaarse-project/meta-doi/issues"
+  },
+  "homepage": "https://github.com/ezpaarse-project/meta-doi#readme"
 }
