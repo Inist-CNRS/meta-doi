@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "Wrapper around the Crossref API.",
   "main": "index.js",
+  "bin": {
+    "meta-doi": "bin/meta-doi.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
