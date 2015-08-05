@@ -45,10 +45,7 @@ function DOIcheck(testCase) {
   describe('DOI request ', function () {
       it('should be correctly enriched (@01) for ' + testCase.platform, function (done) {
         metaDOI.DOIquery(testCase.doi, function (err, doc) {
-          if (err) {
-            console.error(err);
-            exit(1);
-          }
+          should.ifError(err);
           should.equal(metaDOI.DOIgetPublicationDateYear(doc), testCase.year);
           done();
         });
@@ -62,11 +59,7 @@ function APIcheck(testCase) {
       //console.log(testCase);
       it('should be correctly enriched (@02) for ' + testCase.platform, function (done) {
         metaDOI.APIquery(testCase.doi, function (err, doc) {
-          if (err) {
-            console.error(err);
-            exit(1);
-          }
-          console.log(metaDOI.APIgetPublicationTitle(doc));
+          should.ifError(err);
           should.equal(metaDOI.APIgetPublicationDateYear(doc), testCase.year);
           done();
         });

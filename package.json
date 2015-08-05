@@ -4,18 +4,19 @@
   "description": "Wrapper around the Crossref API.",
   "main": "index.js",
   "bin": {
-    "meta-doi": "bin/cmd.js"
+    "meta-doi": "bin/meta-doi.js"
   },
   "scripts": {
     "test": "mocha test.js"
   },
-  "author": "ezPAARSE Team",
+  "author": {
+    "name": "ezPAARSE Team"
+  },
   "license": "MIT",
   "dependencies": {
     "request": "^2.57.0",
     "xml2json": "^0.7.1",
     "nconf": "~0.7.1",
-    "sugar": "~1.4.1",
     "csv": "~0.4.1",
     "yargs": "^3.7.2"
   },
@@ -34,5 +35,12 @@
   "bugs": {
     "url": "https://github.com/ezpaarse-project/meta-doi/issues"
   },
-  "homepage": "https://github.com/ezpaarse-project/meta-doi#readme"
+  "homepage": "https://github.com/ezpaarse-project/meta-doi#readme",
+  "gitHead": "959076665d01b8a8e24857e9a5d006f761b67e99",
+  "readme": "# meta-doi\nReturn metadata from a DOI identifier\n\n## Usage\n\nCSV file enrichment\n```shell\nmeta-doi -f my_CSV_file_with_doi_field.csv > my_CSV_file_doi_enrich.csv\n```\n\nRequest for a single DOI\n```shell\nmeta-doi --doi \"10.1134/S1607672911010121\"\n```\nwill return :\n```shell\n{ 'doi-publication-title': \n   [ 'Dokl Biochem Biophys',\n     'Doklady Biochemistry and Biophysics' ],\n  'doi-publication-date-year': 2011,\n  'doi-publisher': 'Pleiades Publishing Ltd',\n  'doi-type': 'journal-article',\n  'doi-ISSN': [ '1607-6729', '1608-3091' ],\n  'doi-subject': [ 'Chemistry(all)', 'Biochemistry', 'Biophysics' ] }\n```\n\n\n\n\n\n",
+  "readmeFilename": "README.md",
+  "_id": "meta-doi@0.0.1",
+  "_shasum": "18e33aff6152fcfe75904dff876b5bae188006fd",
+  "_from": "git+https://github.com/ezpaarse-project/meta-doi.git",
+  "_resolved": "git+https://github.com/ezpaarse-project/meta-doi.git#959076665d01b8a8e24857e9a5d006f761b67e99"
 }
