@@ -34,35 +34,58 @@ var testSet = [
 
 describe('Crossref doi', function () {
   testSet.forEach(function(testCase) {
-    //console.log(testCase.platform);
     DOIcheck(testCase);
     APIcheck(testCase);
+  });
+
+  it('should correctly handle doi arrays (@03)', function (done) {
+    var dois = testSet.map(function (set) { return set.doi; });
+
+    metaDOI.resolve(dois, {}, function (err, list) {
+      should.ifError(err);
+
+      list.should.be.instanceof(Array, 'the reponse is not an array');
+      list.should.have.lengthOf(dois.length);
+
+      list.forEach(function (item) {
+        item.should.have.property('doi-publication-date-year');
+        item.should.have.property('doi-DOI');
+
+        item['doi-DOI'].should.be.type('string');
+
+        for (var i = testSet.length - 1; i >= 0; i--) {
+          if (testSet[i].doi.toLowerCase() == item['doi-DOI'].toLowerCase()) { break; }
+        };
+
+        should.exist(testSet[i], 'the doi ' + item['doi-DOI'] + ' that we didn\'t send ');
+        item['doi-publication-date-year'].toString().should.equal(testSet[i].year);
+      });
+
+      done();
+    });
   });
 });
 
 function DOIcheck(testCase) {
-  //console.log(testCase);
   describe('DOI request ', function () {
-      it('should be correctly enriched (@01) for ' + testCase.platform, function (done) {
-        metaDOI.DOIquery(testCase.doi, function (err, doc) {
-          should.ifError(err);
-          should.equal(metaDOI.DOIgetPublicationDateYear(doc), testCase.year);
-          done();
-        });
+    it('should be correctly enriched (@01) for ' + testCase.platform, function (done) {
+      metaDOI.DOIquery(testCase.doi, function (err, doc) {
+        should.ifError(err);
+        should.equal(metaDOI.DOIgetPublicationDateYear(doc), testCase.year);
+        done();
       });
+    });
   });
 }
 
 function APIcheck(testCase) {
-  //console.log(testCase);
   describe('API request ', function () {
-      //console.log(testCase);
-      it('should be correctly enriched (@02) for ' + testCase.platform, function (done) {
-        metaDOI.APIquery(testCase.doi, function (err, doc) {
-          should.ifError(err);
-          should.equal(metaDOI.APIgetPublicationDateYear(doc), testCase.year);
-          done();
-        });
+    it('should be correctly enriched (@02) for ' + testCase.platform, function (done) {
+      metaDOI.APIquery(testCase.doi, function (err, doc) {
+        should.ifError(err);
+        should.equal(metaDOI.APIgetPublicationDateYear(doc), testCase.year);
+        done();
       });
+    });
   });
 }
