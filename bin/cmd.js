@@ -1,11 +1,12 @@
+#!/usr/bin/env node
 'use strict';
 
 /*
 * Command used to enrich csv source with meta info from a doi identifi
 *
 * */
-var csvextractor = require('../../lib/csvextractor.js');
-var metadoi = require('../../lib/meta-doi.js');
+var csvextractor = require('../lib/csvextractor.js');
+var metadoi = require('../lib/meta-doi.js');
 require('sugar'); // add more methods to Objects (like merge)
 var yargs = require('yargs')
   .usage('Enrich a csv with meta information requested from a doi.' +
