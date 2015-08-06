@@ -151,17 +151,10 @@ exports.APIgetPublicationDateYear = function(apiResult) {
   return {};
 };
 
-<<<<<<< HEAD
-exports.APIgetPublicationTitle = function(api_result) {
-  if (api_result.message !== undefined
-   && typeof api_result.message['container-title'] !== undefined) {
-    return api_result.message['container-title'][0];
-=======
 exports.APIgetPublicationTitle = function(apiResult) {
   if (apiResult.message !== undefined
    && typeof apiResult.message['container-title'] !== undefined) {
     return apiResult.message['container-title'][0];
->>>>>>> 4c2f3c4a44f009c2e33eb447d17e57d5e33d3ff7
   }
   return {};
 };
