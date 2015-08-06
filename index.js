@@ -25,9 +25,10 @@ exports.resolve = function (doi, options, cb) {
   exports.APIquery(doi, function (err, response) {
     if (err) {
       console.error("Error : " + err);
-      return cb(err);;
+      return cb(err);
     }
 
+    if (response === null) { return cb(null, {}); }
     if (!response) { return cb(new Error('no response')); }
     if (typeof response !== 'object') {
       return cb(new Error('response is not a valid object'));
@@ -107,19 +108,17 @@ exports.APIquery = function (doi, callback) {
   var url = 'http://api.crossref.org/works';
 
   if (Array.isArray(doi)) {
-    url += '?filter=doi:' + doi.join(',doi:');
+    url += '?rows=' + doi.length + '&filter=doi:' + doi.join(',doi:');
   } else {
     url += '/' + encodeURIComponent(doi);
   }
-
   request.get(url, function (err, res, body) {
     if (err) { return callback(err); }
 
     if (res.statusCode === 404) {
       // doi not found
-      return callback(null, {});
+      return callback(null, null);
     } else if (res.statusCode !== 200) {
-      console.error(url);
       return callback(new Error('unexpected status code : ' + res.statusCode));
     }
 
@@ -173,7 +172,7 @@ exports.APIgetInfo = function(doc, extended) {
     info['doi-license-URL'] = '';
   }
 
-  if (typeof doc !== 'object') { return info; }
+  if (typeof doc !== 'object' || doc === null) { return info; }
 
   // search standard information
   info['doi-publication-title'] = doc['container-title'];

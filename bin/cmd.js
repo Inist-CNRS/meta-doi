@@ -16,14 +16,14 @@ var yargs   = require('yargs')
   .alias('doikey', 'k')
   .alias('extended', 'e')
   .alias('delimiter', 'd')
+  .alias('wait', 'w')
   .alias('silent', 's')
   .describe('doikey', 'the field name containing doi (default "doi").')
   .describe('delimiter', 'delimiter of the csv file. Defaults to ";".')
   .describe('file', 'A csv file to parse. If absent, will read from standard input.')
+  .describe('wait', 'minimum time to wait between queries, in milliseconds. Defaults to 200.')
   .describe('doi', 'A single doi to resolve.');
 var argv = yargs.argv;
-
-// *  from csvextractor
 
 // show usage if --help option is used
 if (argv.help || argv.h) {
@@ -31,78 +31,78 @@ if (argv.help || argv.h) {
   process.exit(0);
 }
 
-var options = {};
-var fields  = [];
-var doikey  = 'doi'; // default key field for doi identifier
+var fields   = [];
+var doikey   = argv.doikey || 'doi';
+var waitTime = parseInt(argv.wait) || 200;
+var options  = { extended: argv.extended || false };
 
-if (argv.doikey) {
-  doikey = argv.doikey;
-}
-
-if (argv.silent) {
-  options.silent = true;
-}
-if (argv.extended) {
-  options.extended = true;
-}
 if (argv.doi) {
   // request for a single doi
-  return metadoi.resolve(argv.doi,
-    options,
-    function (meta) {
-      console.log(meta);
-    }
-  );
+  return metadoi.resolve(argv.doi, options, function (err, meta) {
+    if (err) { throw err; }
+    console.log(meta);
+  });
 }
 
-
-var parser = csv.parse({ delimiter: argv.delimiter || ';', columns: true });
-var stream = process.stdin;
-var buffer = [];
-var first  = true;
-var busy   = false;
-
-if (argv.file) {
-  stream = fs.createReadStream(argv.file);
-}
+var parser     = csv.parse({ delimiter: argv.delimiter || ';', columns: true });
+var stream     = argv.file ? fs.createReadStream(argv.file) : process.stdin;
+var buffer     = [];
+var first      = true;
+var busy       = false;
+var ended      = false;
+var bufferSize = 20;
 
 var doiFields  = Object.keys(metadoi.APIgetInfo(null, true));
 var baseFields = [];
 
-function resolve(callback) {
-  var record = buffer.shift();
-  if (record === null) { process.exit(0); }
-  if (!record) { return callback(); }
+function writeLine(record, meta) {
+  if (!record) { return; }
 
-  if (first) {
-    for (var p in record) { baseFields.push(p); }
-    process.stdout.write(baseFields.concat(doiFields).join(';') + '\n');
-    first = false;
-  }
+  var values = [];
 
-  if (!record[doikey]) {
-    console.error("Error : doi key field ", doikey, " not found");
-    return setImmediate(resolve);
-  }
+  baseFields.forEach(function (f) {
+    values.push(record[f] || '');
+  });
 
-  metadoi.resolve(record[doikey], options, function (err, meta) {
-    if (err) { console.error(err); }
-
-    var values = [];
-    baseFields.forEach(function (f) {
-      values.push(record[f] || '');
+  if (typeof meta === 'object') {
+    doiFields.forEach(function (f) {
+      values.push(meta[f] || '');
     });
+  }
 
-    if (typeof meta === 'object') {
-      doiFields.forEach(function (f) {
-        values.push(meta[f] || '');
-      });
+  process.stdout.write(values.join(';') + '\n');
+}
+
+function resolve(callback) {
+  if (buffer.length === 0) { return callback(); }
+  if (buffer.length < bufferSize && !ended) { return callback(); }
+
+  var records = buffer.splice(0, bufferSize);
+  var dois    = records.map(function (r) { return r[doikey]; })
+
+  metadoi.resolve(dois, options, function (err, list) {
+    if (err) { console.error(err); }
+    if (!Array.isArray(list)) {
+      console.error(new Error('meta-doi did not return an array'));
+      return records.forEach(function (r) { writeLine(r); });
     }
 
-    // record fields first and then meta fields
-    process.stdout.write(values.join(';') + '\n');
+    records.forEach(function (record) {
+      var item;
 
-    setTimeout(resolve, 200);
+      for (var i = list.length - 1; i >= 0; i--) {
+        if (typeof list[i]['doi-DOI'] !== 'string') { continue; }
+
+        if (record[doikey].toLowerCase() == list[i]['doi-DOI'].toLowerCase()) {
+          item = list[i];
+          break;
+        }
+      };
+
+      writeLine(record, item);
+    });
+
+    setTimeout(function() { resolve(callback); }, options.waitTime);
   });
 }
 
@@ -111,7 +111,19 @@ stream.pipe(parser)
   var row = parser.read();
   if (!row) { return; }
 
+  if (first) {
+    for (var p in row) { baseFields.push(p); }
+    process.stdout.write(baseFields.concat(doiFields).join(';') + '\n');
+    first = false;
+  }
+
+  if (!row[doikey]) {
+    console.error("Error : doi key field ", doikey, " not found");
+    return writeLine(row);
+  }
+
   buffer.push(row);
+
   if (!busy) {
     busy = true;
     resolve(function () {
@@ -120,9 +132,8 @@ stream.pipe(parser)
   }
 
 }).on('end', function () {
-  buffer.push(null);
-  if (!busy) { resolve(); }
+  ended = true;
+  if (!busy) { resolve(function () {}); }
 }).on('error', function (err) {
   console.error(err);
-  process.exit(1);
 });
