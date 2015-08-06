@@ -3,7 +3,7 @@
 
 var path    = require('path');
 var should  = require('should');
-var metaDOI = require('./index.js');
+var metaDOI = require('../index.js');
 var testSet = [
   {
     "platform" : "ScienceDirect",

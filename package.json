@@ -4,7 +4,7 @@
   "description": "Wrapper around the Crossref API.",
   "main": "index.js",
   "bin": {
-    "meta-doi": "bin/meta-doi.js"
+    "meta-doi": "bin/cmd.js"
   },
   "scripts": {
     "test": "mocha test.js"

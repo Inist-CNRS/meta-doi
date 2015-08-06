@@ -119,7 +119,9 @@ exports.APIquery = function (doi, callback) {
       // doi not found
       return callback(null, null);
     } else if (res.statusCode !== 200) {
-      return callback(new Error('unexpected status code : ' + res.statusCode));
+      var error = new Error('Unexpected status code : ' + res.statusCode);
+      error.url = url;
+      return callback(error);
     }
 
     var info;
@@ -203,7 +205,6 @@ exports.APIgetInfo = function(doc, extended) {
 exports.DOIgetPublicationDateYear = function(doc) {
   var publication_date = doc.crossref_result.query_result.body.query.doi_record.crossref.journal.journal_article.publication_date;
   var publication_date_year;
-  //console.log(publication_date);
   if (typeof publication_date === 'object') {
     if (typeof publication_date[0] === 'object') {
       publication_date_year = publication_date[0].year;
