@@ -106,15 +106,11 @@ exports.APIquery = function (doi, callback) {
 
   var url = 'http://api.crossref.org/works';
 
-<<<<<<< HEAD
-  var url = 'http://api.crossref.org/works/' + encodeURIComponent(doi);
-=======
   if (Array.isArray(doi)) {
     url += '?filter=doi:' + doi.join(',doi:');
   } else {
     url += '/' + encodeURIComponent(doi);
   }
->>>>>>> 4c2f3c4a44f009c2e33eb447d17e57d5e33d3ff7
 
   request.get(url, function (err, res, body) {
     if (err) { return callback(err); }
@@ -185,30 +181,6 @@ exports.APIgetInfo = function(doc, extended) {
     info['doi-license-URL'] = '';
   }
 
-<<<<<<< HEAD
-  if (!api_result) { return info; }
-
-  if (api_result.message !== undefined) {
-    if (typeof api_result.message['container-title'] !== undefined) {
-      // search standard information
-      info['doi-publication-title'] = api_result.message['container-title'];
-      info['doi-publication-date-year'] = api_result.message.issued['date-parts'][0][0];
-      info['doi-publisher'] = api_result.message['publisher'];
-      info['doi-type'] = api_result.message['type'];
-      info['doi-ISSN'] = api_result.message['ISSN'];
-      info['doi-subject'] = api_result.message['subject'];
-    }
-    if (extended) {
-      // search licence informations
-      if (api_result.message['license'] !== undefined
-         && api_result.message['license'][0] !== undefined) {
-        info['doi-license-content-version'] = api_result.message['license'][0]['content-version'];
-        info['doi-license-URL'] = api_result.message['license'][0]['URL'];
-      }
-    }
-    return info;
-  }
-=======
   if (typeof doc !== 'object') { return info; }
 
   // search standard information
@@ -233,7 +205,6 @@ exports.APIgetInfo = function(doc, extended) {
     info['doi-license-URL']             = doc['license'][0]['URL'];
   }
 
->>>>>>> 4c2f3c4a44f009c2e33eb447d17e57d5e33d3ff7
   return info;
 };
 
