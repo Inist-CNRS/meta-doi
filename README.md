@@ -78,7 +78,10 @@ Return doi metadata from dois with options.
 The callback is called with a potential error and a result object (see example above).  
 **doi** could be a string (one doi) and result is an object  
  or  
-**dois** could be an array (many dois) and result is an array of objects.  
+**dois** could be an array (many dois) and result is an array of objects.
+
+You can use options ```{ extended: true }``` to obtain license informations about the doi object
+
 
 
 
