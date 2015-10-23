@@ -1,6 +1,6 @@
 {
   "name": "meta-doi",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Wrapper around the Crossref API.",
   "main": "index.js",
   "bin": {
