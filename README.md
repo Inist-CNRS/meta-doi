@@ -1,5 +1,8 @@
 # meta-doi
-Return metadata from a DOI identifier
+
+Return crossref metadata from a DOI identifier.
+
+The [crossref api](https://github.com/CrossRef/rest-api-doc/blob/master/rest_api.md) is used.
 
 ## installation
 ```shell
