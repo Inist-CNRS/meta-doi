@@ -113,7 +113,11 @@ exports.APIgetInfo = function(doc, extended) {
   if (typeof doc !== 'object' || doc === null) { return info; }
 
   // search standard information
-  info['doi-publication-title'] = doc['container-title'];
+  if (doc['type'] === 'journal-article') {
+    info['doi-publication-title'] = doc['container-title'];
+  } else {
+    info['doi-publication-title'] = doc['title'];
+  }
   info['doi-publisher']         = doc['publisher'];
   info['doi-type']              = doc['type'];
   info['doi-ISSN']              = doc['ISSN'];
