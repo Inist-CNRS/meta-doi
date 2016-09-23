@@ -2,6 +2,8 @@
 
 Return crossref metadata from a DOI identifier.
 
+This module is deprecated, prefer using [crossref module](https://www.npmjs.com/package/crossref)
+
 The [crossref api](https://github.com/CrossRef/rest-api-doc/blob/master/rest_api.md) is used.
 
 ## installation
